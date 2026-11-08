@@ -81,14 +81,14 @@ int main(){
     printf("============================================================\n\n");
     printf("=== CASOS DE PRUEBA ===\n");
 
-    printf("\n[CASO 1] c2 -> %s\n", cadena1);
-    verificar_secuencias("c2",cadena1,10,1);
+    printf("\n[CASO 1] a2 -> %s\n", cadena1);
+    verificar_secuencias("a2",cadena1,10,1);
 
-    printf("\n[CASO 2] c2 -> %s\n", cadena2);
-    verificar_secuencias("c2",cadena2,10,1);
+    printf("\n[CASO 2] a2 -> %s\n", cadena2);
+    verificar_secuencias("a2",cadena2,10,1);
 
-    printf("\n[CASO 3] c2 -> %s\n", cadena3);
-    verificar_secuencias("c2",cadena3,10,1);
+    printf("\n[CASO 3] a2 -> %s\n", cadena3);
+    verificar_secuencias("a2",cadena3,10,1);
 
     printf("\n=== MEDICION DE TIEMPO ===\n");
     printf("[INFO] Verificando 10 iteraciones de 500 movimientos...\n\n");
@@ -98,7 +98,7 @@ int main(){
 
     int completadas = 0;
     for(int i=0; i<10; i++){
-        if(verificar_secuencias("c2",moves,500,0) == 1){
+        if(verificar_secuencias("a2",moves,500,0) == 1){
             completadas++;
         }
     }
