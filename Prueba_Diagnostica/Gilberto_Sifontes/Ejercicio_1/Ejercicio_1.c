@@ -71,7 +71,7 @@ int verificar_secuencias(const char *pos_inicial, const char *movimientos, int n
     
     if(!convertir_posicion(pos_inicial, &actual)){
         if(verbose){
-            printf("ERROR. Posición Inicial Invalida: (%s)\n",pos_inicial);
+            printf("  [ERROR] Posicion inicial invalida: '%s' (formato a1-h8).\n", pos_inicial);
         }
         return 0;
     }
@@ -94,7 +94,7 @@ int verificar_secuencias(const char *pos_inicial, const char *movimientos, int n
 
         if (estado == 0){
             if(verbose){
-                printf("ERROR DE FORMATO. Falla en el movimiento %d (%s).\n",cont,token);
+                printf("  [FORMATO] Movimiento invalido en el paso %d/%d ('%s').\n", cont, n_esperado, token);
             }
             result_final = -cont;
             break;
@@ -102,7 +102,7 @@ int verificar_secuencias(const char *pos_inicial, const char *movimientos, int n
 
         if (estado == -1){
             if(verbose){
-                printf("INCORRECTO. Falla en el movimiento %d (%s).\n",cont,token);
+                printf("  [ERROR] Movimiento ilegal en el paso %d/%d ('%s').\n", cont, n_esperado, token);
             }
             result_final = -cont;
             break;
@@ -114,7 +114,7 @@ int verificar_secuencias(const char *pos_inicial, const char *movimientos, int n
 
     free(copia);
     if(result_final == 1 && verbose){
-        printf("Movimiento CORRECTO. \n");
+        printf("  [OK] Secuencia valida: %d/%d movimientos correctos.\n", cont, n_esperado);
     }
 
     return result_final;
@@ -172,24 +172,23 @@ int main(){
     const char *cadena2 = "Kb4 Ka6 Kc5 Kb3 Kd4 Kf5 Kh4 Kg2 Ke3 Kc5";
     const char *cadena3 = "Kb4 Ka6 Kc5 Kb3 Kd4 Kf5 Kh4 Kg2 Ke3 Kal";
     
-    printf("\n       ================ MOVIMIENTOS DEL CABALLO EN AJEDREZ ================");
-    
-    printf("\n\nRealizado por Gilberto Sifontes. V-32.416.786\n\n");
-    
-    printf("=== CASOS DE PRUEBAS ===\n");
+    printf("============================================================\n");
+    printf("        MOVIMIENTOS DEL CABALLO EN AJEDREZ\n");
+    printf("        Realizado por Gilberto Sifontes - V-32.416.786\n");
+    printf("============================================================\n\n");
+    printf("=== CASOS DE PRUEBA ===\n");
 
-    printf("\n[CASO 1]: %s\n",cadena1);
+    printf("\n[CASO 1] c2 -> %s\n", cadena1);
     verificar_secuencias("c2",cadena1,10,1);
 
-    printf("\n[CASO 2]: %s\n",cadena2);
+    printf("\n[CASO 2] c2 -> %s\n", cadena2);
     verificar_secuencias("c2",cadena2,10,1);
 
-    printf("\n[CASO 3]: %s\n",cadena3);
+    printf("\n[CASO 3] c2 -> %s\n", cadena3);
     verificar_secuencias("c2",cadena3,10,1);
 
     printf("\n=== MEDICION DE TIEMPO ===\n");
-    
-    printf("\nVerificando 10 veces 500 movimientos . . . \n");
+    printf("[INFO] Verificando 10 iteraciones de 500 movimientos...\n\n");
 
     struct timespec inicio, fin;
     timespec_get(&inicio, TIME_UTC);
@@ -205,8 +204,11 @@ int main(){
 
     double tiempo_segundos = (fin.tv_sec - inicio.tv_sec) + (fin.tv_nsec - inicio.tv_nsec) / 1e9;
     
-    printf("\nIteraciones completadas: %d/10\n",completadas);
-    printf("Tiempo de Ejecucion Resultante: %.6f segundos\n\n",tiempo_segundos);
+    printf("  Iteraciones completadas : %d/10\n", completadas);
+    printf("  Tiempo total            : %.6f s (%.3f ms)\n",
+           tiempo_segundos, tiempo_segundos * 1000.0);
+    printf("  Tiempo promedio         : %.8f s por iteracion\n", tiempo_segundos / 10.0);
+    printf("============================================================\n\n");
 
     return 0;
 }
