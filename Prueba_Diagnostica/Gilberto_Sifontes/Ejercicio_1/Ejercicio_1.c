@@ -12,114 +12,17 @@ typedef struct {
     int columna;
 } Posicion;
 
+//Prototipo de Funciones
+
 // Convierte una casilla tipo "c2" a índices internos.
-int convertir_posicion(const char *str, Posicion *p){
-   
-    if (strlen(str)<2) return 0;
-
-    char c = tolower(str[0]);
-    char f = str[1];
-
-    if(c<'a' || c>'h' || f<'1' || f>'8'){
-       return 0;
-    } 
-
-    p->columna = c - 'a';
-    p->fila = f -'1';
-    return 1;
-}
+int convertir_posicion(const char *str, Posicion *p);
 
 // Valida un movimiento "Kxy" desde la posición actual.
-// Retorna: 1 = correcto, -1 = movimiento ilegal, 0 = error de formato.
-
-int validar_movimiento(Posicion actual, const char *mov_str, Posicion *sig){
-
-   if(strlen(mov_str)<3 || (mov_str[0] !='K' && mov_str[0] != 'k')){
-      return 0;
-   }
-
-   char destino_casilla[3];
-
-   destino_casilla[0] = mov_str[1];
-   destino_casilla[1] = mov_str[2];
-   destino_casilla[2] = '\0';
-
-   Posicion destino;
-
-   if (!convertir_posicion(destino_casilla, &destino)){
-     return 0;
-   }
-
-    //Verificar el movimiento del caballo
-    int d_fila = abs(destino.fila - actual.fila);
-    int d_columna=abs(destino.columna -actual.columna);
-
-    if(!((d_fila == 1 && d_columna ==2) || (d_fila == 2 && d_columna ==1) ) ){
-        return -1; //Movimiento Ilegal
-    }
-
-    *sig = destino;
-    return 1; //Movimiento correcto;
-}
-
+int validar_movimiento(Posicion actual, const char *mov_str, Posicion *sig);
 
 // Recorre hasta n_esperado movimientos y valida cada salto.
 // Retorna 1 si toda la secuencia es válida; -cont si falla en el movimiento cont.
-int verificar_secuencias(const char *pos_inicial, const char *movimientos, int n_esperado, int verbose){
-    
-    Posicion actual;
-    
-    if(!convertir_posicion(pos_inicial, &actual)){
-        if(verbose){
-            printf("  [ERROR] Posicion inicial invalida: '%s' (formato a1-h8).\n", pos_inicial);
-        }
-        return 0;
-    }
-
-    // Se copia la cadena porque strtok modifica el texto original.
-    char *copia = strdup(movimientos);
-    char *token = strtok(copia, " ");
-    int cont = 0;
-    int result_final =1; // 1=Correcto por Defecto
-
-    while (token != NULL){
-        cont++;
-
-        if(cont > n_esperado){
-            break; //No procesar más movimientos de lo indicado
-        }
-
-        Posicion sig;
-        int estado = validar_movimiento(actual, token, &sig);
-
-        if (estado == 0){
-            if(verbose){
-                printf("  [FORMATO] Movimiento invalido en el paso %d/%d ('%s').\n", cont, n_esperado, token);
-            }
-            result_final = -cont;
-            break;
-        }
-
-        if (estado == -1){
-            if(verbose){
-                printf("  [ERROR] Movimiento ilegal en el paso %d/%d ('%s').\n", cont, n_esperado, token);
-            }
-            result_final = -cont;
-            break;
-        }
-
-        actual = sig;
-        token = strtok(NULL," ");
-    }
-
-    free(copia);
-    if(result_final == 1 && verbose){
-        printf("  [OK] Secuencia valida: %d/%d movimientos correctos.\n", cont, n_esperado);
-    }
-
-    return result_final;
-
-}
+int verificar_secuencias(const char *pos_inicial, const char *movimientos, int n_esperado, int verbose);
 
 int main(){
     
@@ -211,4 +114,109 @@ int main(){
     printf("============================================================\n\n");
 
     return 0;
+}
+
+// Convierte una casilla tipo "c2" a índices internos.
+int convertir_posicion(const char *str, Posicion *p){
+   
+    if (strlen(str)<2) return 0;
+
+    char c = tolower(str[0]);
+    char f = str[1];
+
+    if(c<'a' || c>'h' || f<'1' || f>'8'){
+       return 0;
+    } 
+
+    p->columna = c - 'a';
+    p->fila = f -'1';
+    return 1;
+}
+
+// Retorna: 1 = correcto, -1 = movimiento ilegal, 0 = error de formato.
+int validar_movimiento(Posicion actual, const char *mov_str, Posicion *sig){
+
+   if(strlen(mov_str)<3 || (mov_str[0] !='K' && mov_str[0] != 'k')){
+      return 0;
+   }
+
+   char destino_casilla[3];
+
+   destino_casilla[0] = mov_str[1];
+   destino_casilla[1] = mov_str[2];
+   destino_casilla[2] = '\0';
+
+   Posicion destino;
+
+   if (!convertir_posicion(destino_casilla, &destino)){
+     return 0;
+   }
+
+    //Verificar el movimiento del caballo
+    int d_fila = abs(destino.fila - actual.fila);
+    int d_columna=abs(destino.columna -actual.columna);
+
+    if(!((d_fila == 1 && d_columna ==2) || (d_fila == 2 && d_columna ==1) ) ){
+        return -1; //Movimiento Ilegal
+    }
+
+    *sig = destino;
+    return 1; //Movimiento correcto;
+}
+
+// Retorna 1 si toda la secuencia es válida; -cont si falla en el movimiento cont.
+int verificar_secuencias(const char *pos_inicial, const char *movimientos, int n_esperado, int verbose){
+    
+    Posicion actual;
+    
+    if(!convertir_posicion(pos_inicial, &actual)){
+        if(verbose){
+            printf("  [ERROR] Posicion inicial invalida: '%s' (formato a1-h8).\n", pos_inicial);
+        }
+        return 0;
+    }
+
+    // Se copia la cadena porque strtok modifica el texto original.
+    char *copia = strdup(movimientos);
+    char *token = strtok(copia, " ");
+    int cont = 0;
+    int result_final =1; // 1=Correcto por Defecto
+
+    while (token != NULL){
+        cont++;
+
+        if(cont > n_esperado){
+            break; //No procesar más movimientos de lo indicado
+        }
+
+        Posicion sig;
+        int estado = validar_movimiento(actual, token, &sig);
+
+        if (estado == 0){
+            if(verbose){
+                printf("  [FORMATO] Movimiento invalido en el paso %d/%d ('%s').\n", cont, n_esperado, token);
+            }
+            result_final = -cont;
+            break;
+        }
+
+        if (estado == -1){
+            if(verbose){
+                printf("  [ERROR] Movimiento ilegal en el paso %d/%d ('%s').\n", cont, n_esperado, token);
+            }
+            result_final = -cont;
+            break;
+        }
+
+        actual = sig;
+        token = strtok(NULL," ");
+    }
+
+    free(copia);
+    if(result_final == 1 && verbose){
+        printf("  [OK] Secuencia valida: %d/%d movimientos correctos.\n", cont, n_esperado);
+    }
+
+    return result_final;
+
 }
